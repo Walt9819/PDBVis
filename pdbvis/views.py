@@ -26,19 +26,19 @@ def getModel(request, modelID=None):
 
         # get if model is available as fbx, pdb or None
         availableType = modelAvailable(modelID)
+
         # if not available, download from DB
-        if availableType == "pdb":
-            raise NotImplementedError("TODO: convert from PDB to FBX")
         if not availableType:
             raise NotImplementedError("TODO: download PDB file from RCSB DB")
-
-
-        # convert from PDB into FBX
-        PDBConverter(input='models/pdb/'+modelID+'.pdb', output='models/fbx/'+modelID+'.fbx')
+            availableType = 'pdb'
+        if availableType == "pdb":
+            raise NotImplementedError("TODO: convert from PDB to FBX")
+            # convert from PDB into FBX
+            PDBConverter(input='models/pdb/'+modelID+'.pdb', output='models/fbx/'+modelID+'.fbx')
 
         buffer = io.open(f'models/fbx/{modelID}.fbx', 'rb')
         buffer.seek(0)
-        return FileResponse(buffer, as_attachment=True, filename='hello.fbx')
+        return FileResponse(buffer, as_attachment=True, filename=f'{modelID}.fbx')
         #return JsonResponse({'Message': f'Valid ID {modelID}'}, status=201)
     else:
         return JsonResponse({'Error': 'Invalid method'}, status=404)
