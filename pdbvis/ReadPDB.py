@@ -1,5 +1,5 @@
 import re
-import sys
+import sys, os
 import bpy
 
 # Read PDB file and get information about the molecule
@@ -21,7 +21,7 @@ class PDBReader():
         splitName = self.name.split('.')
         if splitName[-1] != 'pdb':
             raise ValueError(f"{self.name} is not a valid PDB file.")
-        with open(self.path + '/' + self.name, 'r') as f:
+        with open(os.path.join(self.path, self.name), 'r') as f:
             self.text = f.read()
         self.text = self.text.split('\n')
         print(f"{self.name} succesfully loaded!")
@@ -113,7 +113,7 @@ class PDBConverter():
         """
         Read PDB file using `PDBReader` and convert into mesh
         """
-        reader = PDBReader(self.inputPath + self.inputName)
+        reader = PDBReader(os.path.join(self.inputPath, self.inputName))
         for atom in reader.atoms:
             self.addAtom(atom)
 

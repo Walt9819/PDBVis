@@ -4,6 +4,7 @@ import os
 import io
 
 from .ReadPDB import PDBConverter
+from .GetPDB import downloadModelFromDB
 
 def modelAvailable(modelID, modelsPath="models/"):
     """
@@ -29,8 +30,11 @@ def getModel(request, modelID=None):
 
         # if not available, download from DB
         if not availableType:
-            raise NotImplementedError("TODO: download PDB file from RCSB DB")
+            if not downloadModelFromDB(modelID, 'models/pdb'):
+                return JsonResponse({"Error": "Molecule with ID {modelID} not found . Please check RCSB database for available models in: https://www.rcsb.org/"}, status=401)
             availableType = 'pdb'
+            print("Model has been downloaded!!!")
+            print(os.listdir('models/pdb'))
         if availableType == "pdb":
             raise NotImplementedError("TODO: convert from PDB to FBX")
             # convert from PDB into FBX
