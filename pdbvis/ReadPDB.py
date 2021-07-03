@@ -2,8 +2,6 @@ import re
 import sys, os
 import bpy
 
-print("Im starting!")
-
 # Read PDB file and get information about the molecule
 class PDBReader():
     def __init__(self, path):
@@ -79,25 +77,33 @@ class PDBConverter():
         """
         Check paths, init scene and convert file from PDB, lastly export to FBX
         """
+        print("Checking paths...")
         self.checkPaths() # check if given paths exist
+        print("Initializing blender scene...")
         self.initScene() # start blender scene
-        self.createModel() # TODO Create mesh for each atom
+        print("Creating model...")
+        self.createModel() # Create mesh for each atom
+        print("Exporting model...")
         self.exportModel() # export model into FBX file
+        print("Everything with PDB generator done!")
 
 
     def createModel(self):
         self.readFile()
+
+
+    def exportModel(self):
+        bpy.ops.export_scene.fbx(filepath=os.path.join(self.outputPath, self.outputName))
+
 
     def checkPaths(self):
         """
         Check if given path (input and output) are valid ones (.pdb and .fbx)
         """
         splitName = self.inputName.split('.')
-        print(splitName)
         if splitName[-1] != 'pdb' or len(splitName) != 2:
             raise ValueError("Invalid input file given. File must be a valid PDB file")
         splitName = self.outputName.split('.')
-        print(splitName)
         if splitName[-1] != 'fbx' or len(splitName) != 2:
             raise ValueError("Invalid output file given. File must have a FBX extension or delete dots inside it")
 
@@ -135,6 +141,34 @@ class PDBConverter():
         # Add the mesh to the scene
         newAtom = bpy.data.objects.new(f"Atom_{atom['serial']}", atom)
         bpy.context.collection.objects.link(newAtom)
+
+        # Select `obj` and make it active
+        bpy.context.view_layer.objects.active = newAtom
+        obj.select_set(True) # select it
+        ob = bpy.context.active_object
+
+        material = self.elementMaterial(atom["element"])
+
+        # Assign material it to object
+        if ob.data.materials:
+            # assign to 1st material slot
+            ob.data.materials[0] = mat
+        else:
+            # no slots
+            ob.data.materials.append(mat)
+
+
+    def elementMaterial(self, element):
+        """
+        Check if `element` material was already done, if not create it.
+        """
+        mat = bpy.data.materials.get(element)
+        if not mat:
+            # create material
+            mat = bpy.data.materials.new(name=element)
+            mat.diffuse_color = self.atomProperties[element]["Color"]
+        return mat
+
 
 
 
@@ -269,9 +303,12 @@ Type  int
 ## Might work (https://blender.stackexchange.com/questions/23433/how-to-assign-a-new-material-to-an-object-in-the-scene-from-python)
 # import bpy
 
+# Select object by name
+obj = bpy.data.objects[f"{objName}"]
+
 # Select `obj` and make it active
 bpy.context.view_layer.objects.active = obj
-obj.select_set(True)
+obj.select_set(True) # select it
 
 ob = bpy.context.active_object
 
@@ -280,6 +317,8 @@ mat = bpy.data.materials.get("Material")
 if mat is None:
     # create material
     mat = bpy.data.materials.new(name="Material")
+    mat.diffuse_color = [1.0, 1.0, 1.0, 1.0] # base color with 4 float numbers (RGBA color)
+    # All material attributes: https://docs.blender.org/api/current/bpy.types.Material.html#bpy.types.Material
 
 # Assign it to object
 if ob.data.materials:
@@ -288,6 +327,10 @@ if ob.data.materials:
 else:
     # no slots
     ob.data.materials.append(mat)
+
+#### Export model as FBX
+bpy.ops.export_scene.fbx(filepath='')
+# Source: https://docs.blender.org/api/current/bpy.ops.export_scene.html?highlight=export#module-bpy.ops.export_scene
 """
 
 # Not working well
