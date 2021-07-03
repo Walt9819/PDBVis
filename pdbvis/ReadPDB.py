@@ -2,6 +2,8 @@ import re
 import sys, os
 import bpy
 
+print("Im starting!")
+
 # Read PDB file and get information about the molecule
 class PDBReader():
     def __init__(self, path):
