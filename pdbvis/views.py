@@ -6,10 +6,13 @@ import io
 from .ReadPDB import PDBConverter
 from .GetPDB import downloadModelFromDB
 
+print(f"Current wd is: {os.path.abspath(os.getcwd())}")
+
 def modelAvailable(modelID, modelsPath="models/"):
     """
     Return if model with `modelID` is available as `fbx` or `pdb`.
     """
+    print(os.listdir())
     for type in ["fbx", "pdb"]:
         files = os.listdir(f'{modelsPath}/{type}')
         for fl in files:
@@ -23,7 +26,6 @@ def getModel(request, modelID=None):
     if request.method == "GET":
         if len(modelID) != 4:
             return JsonResponse({'Error': 'Invalid model ID, must be 4 characters long.'}, status=404)
-        pdbs = os.listdir('models/pdb')
 
         # get if model is available as fbx, pdb or None
         availableType = modelAvailable(modelID)
@@ -33,14 +35,12 @@ def getModel(request, modelID=None):
             if not downloadModelFromDB(modelID, 'models/pdb'):
                 return JsonResponse({"Error": "Molecule with ID {modelID} not found . Please check RCSB database for available models in: https://www.rcsb.org/"}, status=401)
             availableType = 'pdb'
-            print("Model has been downloaded!!!")
-            print(os.listdir('models/pdb'))
-        if availableType == "pdb":
+        if not availableType:
             raise NotImplementedError("TODO: convert from PDB to FBX")
             # convert from PDB into FBX
             PDBConverter(input='models/pdb/'+modelID+'.pdb', output='models/fbx/'+modelID+'.fbx')
 
-        buffer = io.open(f'models/fbx/{modelID}.fbx', 'rb')
+        buffer = io.open(f'models/pdb/{modelID}.pdb', 'rb')
         buffer.seek(0)
         return FileResponse(buffer, as_attachment=True, filename=f'{modelID}.fbx')
         #return JsonResponse({'Message': f'Valid ID {modelID}'}, status=201)
