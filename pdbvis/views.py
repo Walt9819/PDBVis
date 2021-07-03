@@ -6,6 +6,7 @@ import io
 from .ReadPDB import PDBConverter
 from .GetPDB import downloadModelFromDB
 
+os.chdir('PDBVis/')
 print(f"Current wd is: {os.path.abspath(os.getcwd())}")
 
 def modelAvailable(modelID, modelsPath="models/"):
@@ -14,7 +15,7 @@ def modelAvailable(modelID, modelsPath="models/"):
     """
     print(os.listdir())
     for type in ["fbx", "pdb"]:
-        files = os.listdir(f'{modelsPath}/{type}')
+        files = os.listdir(os.path.join(modelsPath, type))
         for fl in files:
             fSplit = fl.split('.')
             if modelID == fSplit[0] and fSplit[-1] == type:
@@ -33,14 +34,13 @@ def getModel(request, modelID=None):
         # if not available, download from DB
         if not availableType:
             if not downloadModelFromDB(modelID, 'models/pdb'):
-                return JsonResponse({"Error": "Molecule with ID {modelID} not found . Please check RCSB database for available models in: https://www.rcsb.org/"}, status=401)
+                return JsonResponse({"Error": f"Molecule with ID {modelID} not found . Please check RCSB database for available models in: https://www.rcsb.org/"}, status=401)
             availableType = 'pdb'
         if not availableType:
-            raise NotImplementedError("TODO: convert from PDB to FBX")
             # convert from PDB into FBX
-            PDBConverter(input='models/pdb/'+modelID+'.pdb', output='models/fbx/'+modelID+'.fbx')
+            PDBConverter(input=os.path.join('models', 'pdb', f'{modelID}.pdb', output=os.path.join('models', 'fbx', f'{modelID}.fbx')
 
-        buffer = io.open(f'models/pdb/{modelID}.pdb', 'rb')
+        buffer = io.open(os.path.join("models", "pdb", f'{modelID}.pdb'), 'rb')
         buffer.seek(0)
         return FileResponse(buffer, as_attachment=True, filename=f'{modelID}.fbx')
         #return JsonResponse({'Message': f'Valid ID {modelID}'}, status=201)
