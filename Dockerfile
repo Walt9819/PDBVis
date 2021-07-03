@@ -40,10 +40,11 @@ RUN pip3 install -r $DockerHOME/PDBVis/requirements.txt
 RUN cd $DockerHOME/PDBVis
 
 # make migrations
-RUN python3 $DockerHOME/PDBVis/manage.py migrate
+RUN python3 manage.py migrate
 
 # start server
-CMD ["python3", "$DockerHOME/PDBVis/manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python3", "manage.py", "runserver"]
+# CMD ["python3", "$DockerHOME/PDBVis/manage.py", "runserver"] local testing
 
 # Build image
 # PS D:\Documentos\DRX\PDBVis_API\Website\PDBVis> docker build -t pdbvistest . --no-cache
