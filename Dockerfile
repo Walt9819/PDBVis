@@ -40,10 +40,10 @@ RUN pip3 install -r $DockerHOME/PDBVis/requirements.txt
 RUN cd $DockerHOME/PDBVis
 
 # make migrations
-RUN python3 manage.py migrate
+RUN python3 $DockerHOME/PDBVis/manage.py migrate
 
 # start server
-CMD ["python3", "manage.py", "runserver"]
+CMD python3 $DockerHOME/PDBVis/manage.py runserver
 # CMD ["python3", "$DockerHOME/PDBVis/manage.py", "runserver"] local testing
 
 # Build image
