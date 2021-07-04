@@ -112,9 +112,9 @@ class PDBConverter():
         """
         Start blender scene and remove initial setup (cube, camera, light and all objects)
         """
-        allObj = (bpy.data.objects)
+        allObj = bpy.data.objects
         for obj in allObj:
-            bpy.data.meshes.remove(obj)
+            bpy.data.objects.remove(obj)
 
 
     def readFile(self):
