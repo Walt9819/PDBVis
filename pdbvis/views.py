@@ -7,7 +7,6 @@ from .ReadPDB import PDBConverter
 from .GetPDB import downloadModelFromDB
 
 os.chdir('PDBVis/')
-print(f"Current wd is: {os.path.abspath(os.getcwd())}")
 
 def modelAvailable(modelID, modelsPath="models/"):
     """
@@ -36,7 +35,7 @@ def getModel(request, modelID=None):
             if not downloadModelFromDB(modelID, 'models/pdb'):
                 return JsonResponse({"Error": f"Molecule with ID {modelID} not found . Please check RCSB database for available models in: https://www.rcsb.org/"}, status=401)
             availableType = 'pdb'
-        if not availableType:
+        if availableType == "pdb":
             # convert from PDB into FBX
             PDBConverter(input=os.path.join('models', 'pdb', f'{modelID}.pdb', output=os.path.join('models', 'fbx', f'{modelID}.fbx')))
 
