@@ -144,10 +144,10 @@ class PDBConverter():
         # Assign material to object
         if ob.data.materials:
             # assign to 1st material slot
-            ob.data.materials[0] = mat
+            ob.data.materials[0] = material
         else:
             # no slots
-            ob.data.materials.append(mat)
+            ob.data.materials.append(material)
 
 
     def elementMaterial(self, element):
