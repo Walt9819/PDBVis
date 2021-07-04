@@ -136,7 +136,7 @@ class PDBConverter():
         bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=6, radius=radius, location=(atom["x"], atom["y"], atom["z"]))
 
         # Select `ob` and make it active
-        ob = bpy.context.active_object
+        ob = bpy.context.view_layer.objects.active
         ob.name = f"Atom_{atom['serial']}"
 
         material = self.elementMaterial(element)
