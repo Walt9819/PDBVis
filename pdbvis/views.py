@@ -40,7 +40,7 @@ def getModel(request, modelID=None):
             # convert from PDB into FBX
             PDBConverter(input=os.path.join('models', 'pdb', f'{modelID}.pdb', output=os.path.join('models', 'fbx', f'{modelID}.fbx')))
 
-        buffer = io.open(os.path.join("models", "pdb", f'{modelID}.pdb'), 'rb')
+        buffer = io.open(os.path.join("models", "fbx", f'{modelID}.fbx'), 'rb')
         buffer.seek(0)
         return FileResponse(buffer, as_attachment=True, filename=f'{modelID}.fbx')
         #return JsonResponse({'Message': f'Valid ID {modelID}'}, status=201)
