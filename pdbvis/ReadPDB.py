@@ -130,26 +130,16 @@ class PDBConverter():
         """
         Add a mesh from given `atom`
         """
-        bm = bmesh.new() # Create a new mesh
-        bmesh.ops.create_icosphere(bm, subdivisions=6, diameter=atom["RadiusUsed"]*2); # Add an icosphere with default values
+        # Create mesh and locate it
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=6, radius=atom["RadiusUsed"], location=(atom["x"], atom["y"], atom["z"]))
 
-        # Finish up, write the bmesh into a new mesh
-        atomMesh = bpy.data.meshes.new("Mesh")
-        bm.to_mesh(atomMesh)
-        bm.free()
-
-        # Add the mesh to the scene
-        newAtom = bpy.data.objects.new(f"Atom_{atom['serial']}", atom)
-        bpy.context.collection.objects.link(newAtom)
-
-        # Select `obj` and make it active
-        bpy.context.view_layer.objects.active = newAtom
-        obj.select_set(True) # select it
+        # Select `ob` and make it active
         ob = bpy.context.active_object
+        ob.name = f"Atom_{atom['serial']}"
 
         material = self.elementMaterial(atom["element"])
 
-        # Assign material it to object
+        # Assign material to object
         if ob.data.materials:
             # assign to 1st material slot
             ob.data.materials[0] = mat
