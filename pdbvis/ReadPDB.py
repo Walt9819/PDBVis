@@ -130,14 +130,16 @@ class PDBConverter():
         """
         Add a mesh from given `atom`
         """
+        element = atom["element"]
+        radius = self.atomProperties[element]["RadiusUsed"]
         # Create mesh and locate it
-        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=6, radius=atom["RadiusUsed"], location=(atom["x"], atom["y"], atom["z"]))
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=6, radius=radius, location=(atom["x"], atom["y"], atom["z"]))
 
         # Select `ob` and make it active
         ob = bpy.context.active_object
         ob.name = f"Atom_{atom['serial']}"
 
-        material = self.elementMaterial(atom["element"])
+        material = self.elementMaterial(element)
 
         # Assign material to object
         if ob.data.materials:
@@ -203,7 +205,7 @@ class BlenderPDBInit():
             if s.replace(' ', '') == "":
                 continue
             matches = self.getMatches(self.data, s)
-            # if pattern wasnt succesful, try removing last to items
+            # if pattern wasnt succesful, try removing last two items
             if len(matches) == 0:
                 matches = self.getMatches(self.data[:-2], s) # skip 'charge' and 'ioinc radius'
                 matches[0]["ChargeState"] = None
