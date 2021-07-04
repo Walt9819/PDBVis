@@ -131,7 +131,7 @@ class PDBConverter():
         Add a mesh from given `atom`
         """
         element = atom["element"]
-        radius = self.atomProperties[element]["RadiusUsed"]
+        radius = self.atomProperties.atoms[element]["RadiusUsed"]
         # Create mesh and locate it
         bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=6, radius=radius, location=(atom["x"], atom["y"], atom["z"]))
 
@@ -158,7 +158,7 @@ class PDBConverter():
         if not mat:
             # create material
             mat = bpy.data.materials.new(name=element)
-            mat.diffuse_color = self.atomProperties[element]["Color"]
+            mat.diffuse_color = self.atomProperties.atoms[element]["Color"]
         return mat
 
 
